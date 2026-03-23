@@ -9,8 +9,14 @@ import '../widgets/category_chip.dart';
 class TaskFormScreen extends ConsumerStatefulWidget {
   final DateTime initialDate;
   final Task? existing;
+  final int? initialCategoryId;
 
-  const TaskFormScreen({super.key, required this.initialDate, this.existing});
+  const TaskFormScreen({
+    super.key,
+    required this.initialDate,
+    this.existing,
+    this.initialCategoryId,
+  });
 
   @override
   ConsumerState<TaskFormScreen> createState() => _TaskFormScreenState();
@@ -28,7 +34,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     _titleController = TextEditingController(text: widget.existing?.title ?? '');
     _memoController = TextEditingController(text: widget.existing?.memo ?? '');
     _selectedDate = widget.existing?.date ?? widget.initialDate;
-    _selectedCategoryId = widget.existing?.categoryId;
+    _selectedCategoryId = widget.existing?.categoryId ?? widget.initialCategoryId;
   }
 
   @override

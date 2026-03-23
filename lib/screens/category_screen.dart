@@ -19,7 +19,7 @@ class CategoryScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('카테고리 관리'),
+        title: const Text('카테고리 관리', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -36,23 +36,23 @@ class CategoryScreen extends ConsumerWidget {
               ),
             )
           : ListView.separated(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(8),
               itemCount: categories.length,
               separatorBuilder: (_, _) => const Divider(color: Colors.white12),
               itemBuilder: (context, index) {
                 final cat = categories[index];
                 return ListTile(
-                  leading: CircleAvatar(backgroundColor: Color(cat.color), radius: 14),
-                  title: Text(cat.name, style: const TextStyle(color: Colors.white)),
+                  leading: CircleAvatar(backgroundColor: Color(cat.color), radius: 6),
+                  title: Text(cat.name, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.white54, size: 20),
+                        icon: const Icon(Icons.edit, color: Colors.white54, size: 16),
                         onPressed: () => _showCategoryDialog(context, ref, cat),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
+                        icon: const Icon(Icons.delete, color: Colors.redAccent, size: 16),
                         onPressed: () => _confirmDelete(context, ref, cat),
                       ),
                     ],

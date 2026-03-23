@@ -25,88 +25,74 @@ class TaskCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1C1C1E),
-          borderRadius: BorderRadius.circular(12),
-          border: Border(left: BorderSide(color: categoryColor, width: 4)),
-        ),
-        child: Row(
-          children: [
-            // 완료 토글 버튼
-            GestureDetector(
-              onTap: onToggle,
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: completed ? Colors.blueAccent : Colors.transparent,
-                  border: Border.all(
-                    color: completed ? Colors.blueAccent : Colors.white38,
-                    width: 2,
+      child: Padding(
+        padding: const EdgeInsets.only(left : 8),
+        child: Container(
+          child: Row(
+            children: [
+              // 완료 토글 버튼
+              GestureDetector(
+                onTap: onToggle,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    shape: BoxShape.rectangle,
+                    color: completed ? Colors.blueAccent : Colors.transparent,
+                    border: Border.all(
+                      color: completed ? Colors.blueAccent : Colors.white38,
+                      width: 2,
+                    ),
                   ),
+                  child: completed
+                      ? const Icon(Icons.check, size: 14, color: Colors.white)
+                      : null,
                 ),
-                child: completed
-                    ? const Icon(Icons.check, size: 14, color: Colors.white)
-                    : null,
               ),
-            ),
-            const SizedBox(width: 12),
-
-            // 내용
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: TextStyle(
-                      color: completed ? Colors.white38 : Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      decoration: completed ? TextDecoration.lineThrough : null,
-                      decorationColor: Colors.white38,
-                    ),
-                  ),
-                  if (task.memo != null && task.memo!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      task.memo!,
-                      style: TextStyle(
-                        color: completed ? Colors.white24 : Colors.white54,
-                        fontSize: 12,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  if (category != null) ...[
-                    const SizedBox(height: 4),
+              const SizedBox(width: 12),
+        
+              // 내용
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Row(
                       children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(color: categoryColor, shape: BoxShape.circle),
+                        Text(
+                          task.title,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            decorationColor: Colors.white38,
+                          ),
                         ),
-                        const SizedBox(width: 4),
-                        Text(category!.name, style: TextStyle(color: categoryColor, fontSize: 11)),
+                        if (task.memo != null && task.memo!.isNotEmpty) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            "- " + task.memo!,
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 12,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ],
                     ),
                   ],
-                ],
+                ),
               ),
-            ),
-
-            // 삭제 버튼
-            IconButton(
-              icon: const Icon(Icons.delete_outline, color: Colors.white38, size: 20),
-              onPressed: onDelete,
-            ),
-          ],
+        
+              // 삭제 버튼
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.white38, size: 20),
+                onPressed: onDelete,
+              ),
+            ],
+          ),
         ),
       ),
     );
