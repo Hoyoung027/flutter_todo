@@ -80,6 +80,7 @@ class TaskBottomSheet extends ConsumerWidget {
                       );
                     },
                     onDelete: () => _confirmDelete(context, ref, task),
+                    onToggle: () => ref.read(taskProvider).toggleComplete(task.id!),
                   );
                 },
               ),

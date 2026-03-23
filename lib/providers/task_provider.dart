@@ -48,4 +48,13 @@ class TaskNotifier extends ChangeNotifier {
     _tasks.removeWhere((t) => t.id == id);
     notifyListeners();
   }
+
+  Future<void> toggleComplete(int id) async {
+    final index = _tasks.indexWhere((t) => t.id == id);
+    if (index == -1) return;
+    final updated = _tasks[index].copyWith(isCompleted: !_tasks[index].isCompleted);
+    await _db.updateTask(updated);
+    _tasks[index] = updated;
+    notifyListeners();
+  }
 }
