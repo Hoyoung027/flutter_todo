@@ -1,8 +1,14 @@
 import 'package:flutter/foundation.dart' hide Category;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../db/database_helper.dart';
 import '../models/category.dart';
 
-class CategoryProvider extends ChangeNotifier {
+// 전역 Provider 선언 — 위젯 트리 어디서든 ref.watch/read로 접근 가능
+final categoryProvider = ChangeNotifierProvider<CategoryNotifier>((ref) {
+  return CategoryNotifier()..load();
+});
+
+class CategoryNotifier extends ChangeNotifier {
   final _db = DatabaseHelper();
   List<Category> _categories = [];
 

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/category.dart';
 import '../providers/category_provider.dart';
 
-class CategoryScreen extends StatelessWidget {
+// StatelessWidget → ConsumerWidget
+class CategoryScreen extends ConsumerWidget {
   const CategoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // context.watch → ref.watch
+    final notifier = ref.watch(categoryProvider);
+    final categories = notifier.categories;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -18,49 +23,47 @@ class CategoryScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => _showCategoryDialog(context, null),
+            onPressed: () => _showCategoryDialog(context, ref, null),
           ),
         ],
       ),
-      body: Consumer<CategoryProvider>(
-        builder: (context, provider, _) {
-          final categories = provider.categories;
-          if (categories.isEmpty) {
-            return const Center(
-              child: Text('카테고리가 없습니다.\n+ 버튼으로 추가해보세요.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white54)),
-            );
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: categories.length,
-            separatorBuilder: (_, _) => const Divider(color: Colors.white12),
-            itemBuilder: (context, index) {
-              final cat = categories[index];
-              return ListTile(
-                leading: CircleAvatar(backgroundColor: Color(cat.color), radius: 14),
-                title: Text(cat.name, style: const TextStyle(color: Colors.white)),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.white54, size: 20),
-                      onPressed: () => _showCategoryDialog(context, cat),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
-                      onPressed: () => _confirmDelete(context, provider, cat),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-      ),
+      body: categories.isEmpty
+          ? const Center(
+              child: Text(
+                '카테고리가 없습니다.\n+ 버튼으로 추가해보세요.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white54),
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: categories.length,
+              separatorBuilder: (_, _) => const Divider(color: Colors.white12),
+              itemBuilder: (context, index) {
+                final cat = categories[index];
+                return ListTile(
+                  leading: CircleAvatar(backgroundColor: Color(cat.color), radius: 14),
+                  title: Text(cat.name, style: const TextStyle(color: Colors.white)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.white54, size: 20),
+                        onPressed: () => _showCategoryDialog(context, ref, cat),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
+                        onPressed: () => _confirmDelete(context, ref, cat),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 
-  void _showCategoryDialog(BuildContext context, Category? existing) {
+  void _showCategoryDialog(BuildContext context, WidgetRef ref, Category? existing) {
     final nameController = TextEditingController(text: existing?.name ?? '');
     Color pickedColor = existing != null ? Color(existing.color) : Colors.blueAccent;
 
@@ -132,11 +135,12 @@ class CategoryScreen extends StatelessWidget {
                   onPressed: () async {
                     final name = nameController.text.trim();
                     if (name.isEmpty) return;
-                    final provider = context.read<CategoryProvider>();
+                    // context.read 대신 ref.read
+                    final notifier = ref.read(categoryProvider);
                     if (existing == null) {
-                      await provider.add(name, pickedColor.toARGB32());
+                      await notifier.add(name, pickedColor.toARGB32());
                     } else {
-                      await provider.update(existing.copyWith(name: name, color: pickedColor.toARGB32()));
+                      await notifier.update(existing.copyWith(name: name, color: pickedColor.toARGB32()));
                     }
                     if (ctx.mounted) Navigator.pop(ctx);
                   },
@@ -150,7 +154,7 @@ class CategoryScreen extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, CategoryProvider provider, Category cat) {
+  void _confirmDelete(BuildContext context, WidgetRef ref, Category cat) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -167,7 +171,7 @@ class CategoryScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              await provider.delete(cat.id!);
+              await ref.read(categoryProvider).delete(cat.id!);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('삭제', style: TextStyle(color: Colors.redAccent)),

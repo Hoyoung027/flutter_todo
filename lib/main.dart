@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'providers/category_provider.dart';
-import 'providers/task_provider.dart';
 import 'screens/calendar_screen.dart';
 
 void main() {
@@ -12,12 +10,9 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   }
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CategoryProvider()..load()),
-        ChangeNotifierProvider(create: (_) => TaskProvider()..load()),
-      ],
-      child: const MyApp(),
+    // MultiProvider 대신 ProviderScope 하나로 감싸면 끝
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/task.dart';
 import '../providers/task_provider.dart';
 import '../providers/category_provider.dart';
 import '../screens/task_form_screen.dart';
 import 'task_card.dart';
 
-class TaskBottomSheet extends StatelessWidget {
+// StatelessWidget → ConsumerWidget
+class TaskBottomSheet extends ConsumerWidget {
   final DateTime date;
 
   const TaskBottomSheet({super.key, required this.date});
 
   @override
-  Widget build(BuildContext context) {
-    final tasks = context.watch<TaskProvider>().tasksForDay(date);
-    final categoryProvider = context.watch<CategoryProvider>();
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    // ref.watch로 상태 구독
+    final tasks = ref.watch(taskProvider).tasksForDay(date);
+    final categoryNotifier = ref.watch(categoryProvider);
     final dateLabel = '${date.year}년 ${date.month}월 ${date.day}일';
 
     return Container(
@@ -28,7 +29,6 @@ class TaskBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 드래그 핸들
           Center(
             child: Container(
               width: 40, height: 4,
@@ -36,8 +36,6 @@ class TaskBottomSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
-          // 헤더
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,8 +53,6 @@ class TaskBottomSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-
-          // 일정 목록
           if (tasks.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
@@ -70,7 +66,7 @@ class TaskBottomSheet extends StatelessWidget {
                 itemCount: tasks.length,
                 itemBuilder: (context, index) {
                   final task = tasks[index];
-                  final category = categoryProvider.findById(task.categoryId);
+                  final category = categoryNotifier.findById(task.categoryId);
                   return TaskCard(
                     task: task,
                     category: category,
@@ -83,7 +79,7 @@ class TaskBottomSheet extends StatelessWidget {
                         ),
                       );
                     },
-                    onDelete: () => _confirmDelete(context, task),
+                    onDelete: () => _confirmDelete(context, ref, task),
                   );
                 },
               ),
@@ -93,7 +89,7 @@ class TaskBottomSheet extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, Task task) {
+  void _confirmDelete(BuildContext context, WidgetRef ref, Task task) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -107,7 +103,8 @@ class TaskBottomSheet extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              await context.read<TaskProvider>().delete(task.id!);
+              // ref.read로 쓰기 작업
+              await ref.read(taskProvider).delete(task.id!);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('삭제', style: TextStyle(color: Colors.redAccent)),

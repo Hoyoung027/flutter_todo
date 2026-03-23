@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/task.dart';
 import '../providers/task_provider.dart';
 import '../providers/category_provider.dart';
 import '../widgets/category_chip.dart';
 
-class TaskFormScreen extends StatefulWidget {
+// StatefulWidget → ConsumerStatefulWidget
+class TaskFormScreen extends ConsumerStatefulWidget {
   final DateTime initialDate;
   final Task? existing;
 
   const TaskFormScreen({super.key, required this.initialDate, this.existing});
 
   @override
-  State<TaskFormScreen> createState() => _TaskFormScreenState();
+  ConsumerState<TaskFormScreen> createState() => _TaskFormScreenState();
 }
 
-class _TaskFormScreenState extends State<TaskFormScreen> {
+class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _memoController;
   late DateTime _selectedDate;
@@ -43,10 +44,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      builder: (context, child) => Theme(
-        data: ThemeData.dark(),
-        child: child!,
-      ),
+      builder: (context, child) => Theme(data: ThemeData.dark(), child: child!),
     );
     if (picked != null) setState(() => _selectedDate = picked);
   }
@@ -60,20 +58,23 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       return;
     }
 
-    final provider = context.read<TaskProvider>();
+    // context.read → ref.read
+    final notifier = ref.read(taskProvider);
+    final memo = _memoController.text.trim().isEmpty ? null : _memoController.text.trim();
+
     if (widget.existing == null) {
-      await provider.add(Task(
+      await notifier.add(Task(
         title: title,
         date: _selectedDate,
         categoryId: _selectedCategoryId,
-        memo: _memoController.text.trim().isEmpty ? null : _memoController.text.trim(),
+        memo: memo,
       ));
     } else {
-      await provider.update(widget.existing!.copyWith(
+      await notifier.update(widget.existing!.copyWith(
         title: title,
         date: _selectedDate,
         categoryId: _selectedCategoryId,
-        memo: _memoController.text.trim().isEmpty ? null : _memoController.text.trim(),
+        memo: memo,
       ));
     }
 
@@ -82,7 +83,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = context.watch<CategoryProvider>().categories;
+    // ref.watch로 카테고리 목록 구독
+    final categories = ref.watch(categoryProvider).categories;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -102,7 +104,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 제목
             TextField(
               controller: _titleController,
               style: const TextStyle(color: Colors.white, fontSize: 18),
@@ -115,18 +116,13 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               autofocus: widget.existing == null,
             ),
             const SizedBox(height: 24),
-
-            // 날짜 선택
-            _SectionLabel(label: '날짜'),
+            const _SectionLabel(label: '날짜'),
             const SizedBox(height: 8),
             GestureDetector(
               onTap: _pickDate,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1C1C1E),
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                decoration: BoxDecoration(color: const Color(0xFF1C1C1E), borderRadius: BorderRadius.circular(10)),
                 child: Row(
                   children: [
                     const Icon(Icons.calendar_today, color: Colors.white54, size: 18),
@@ -140,9 +136,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
               ),
             ),
             const SizedBox(height: 24),
-
-            // 카테고리 선택
-            _SectionLabel(label: '카테고리'),
+            const _SectionLabel(label: '카테고리'),
             const SizedBox(height: 10),
             if (categories.isEmpty)
               const Text('카테고리가 없습니다.', style: TextStyle(color: Colors.white38, fontSize: 13))
@@ -171,9 +165,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 ],
               ),
             const SizedBox(height: 24),
-
-            // 메모
-            _SectionLabel(label: '메모'),
+            const _SectionLabel(label: '메모'),
             const SizedBox(height: 8),
             TextField(
               controller: _memoController,
@@ -184,7 +176,10 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 hintStyle: TextStyle(color: Colors.white38),
                 filled: true,
                 fillColor: Color(0xFF1C1C1E),
-                border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(10))),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
               ),
             ),
           ],

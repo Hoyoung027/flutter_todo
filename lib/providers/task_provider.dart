@@ -1,8 +1,14 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../db/database_helper.dart';
 import '../models/task.dart';
 
-class TaskProvider extends ChangeNotifier {
+// 전역 Provider 선언
+final taskProvider = ChangeNotifierProvider<TaskNotifier>((ref) {
+  return TaskNotifier()..load();
+});
+
+class TaskNotifier extends ChangeNotifier {
   final _db = DatabaseHelper();
   List<Task> _tasks = [];
 
@@ -10,7 +16,9 @@ class TaskProvider extends ChangeNotifier {
 
   List<Task> tasksForDay(DateTime day) {
     final dateStr = day.toIso8601String().substring(0, 10);
-    return _tasks.where((t) => t.date.toIso8601String().substring(0, 10) == dateStr).toList();
+    return _tasks
+        .where((t) => t.date.toIso8601String().substring(0, 10) == dateStr)
+        .toList();
   }
 
   bool hasTasksOnDay(DateTime day) => tasksForDay(day).isNotEmpty;
