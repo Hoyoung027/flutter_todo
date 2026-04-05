@@ -94,19 +94,19 @@ class Category {
 ### 리스트
 캘린더에서 날짜를 선택하면 해당 날짜의 할 일 목록이 아래에 표시됩니다. 각 날짜 위에는 해당 날짜의 할 일 개수가 표시되며, 모든 할 일을 완료하면 숫자 대신 체크 표시로 바뀝니다.
 
-![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.40.39.png>)
+<img src="Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.40.39.png" width="300">
 
 ### 추가
 카테고리 우측 `+` 버튼을 눌러 할 일을 추가합니다. 제목, 날짜, 카테고리, 메모를 입력할 수 있습니다.
 
-![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.41.27.png>)
-![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.42.36.png>)
+<img src="Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.41.27.png" width="300">
+<img src="Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.42.36.png" width="300">
 
 ### 삭제
 할 일 목록의 우측 삭제 버튼이나 상세 화면의 삭제 버튼을 눌러 삭제합니다.
 
-![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.41.51.png>)
-![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.42.51.png>)
+<img src="Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.41.51.png" width="300">
+<img src="Simulator Screenshot - iPhone 17 - 2026-04-04 at 22.42.51.png" width="300">
 
 ---
 
@@ -135,12 +135,19 @@ final categoryProvider = ChangeNotifierProvider<CategoryNotifier>((ref) {
 Flutter DevTools를 활용해 아래 항목을 분석했습니다.
 
 - **Inspector** — 위젯 트리 구조 확인, 각 위젯의 크기·패딩 검사
-![alt text](<스크린샷 2026-04-04 오후 11.12.52.png>)
+
+<img src="스크린샷 2026-04-04 오후 11.12.52.png" width="600">
+
 - **Timeline** — 프레임 렌더링 시간 측정, 60fps 유지 여부 확인
-![alt text](<스크린샷 2026-04-04 오후 11.19.53.png>)
+
+<img src="스크린샷 2026-04-04 오후 11.19.53.png" width="600">
+
 - **Memory** — 앱 실행 중 메모리 사용량 추적
-![alt text](image.png)
+
+<img src="image.png" width="600">
+
 - **Performance** — CPU/GPU 사용률 모니터링
-![alt text](image-1.png)
-![alt text](image-2.png)
+
+<img src="image-1.png" width="600">
+<img src="image-2.png" width="600">
 
