@@ -41,19 +41,23 @@ class CategoryScreen extends ConsumerWidget {
               separatorBuilder: (_, _) => const Divider(color: Colors.white12),
               itemBuilder: (context, index) {
                 final cat = categories[index];
-                return ListTile(
-                  leading: CircleAvatar(backgroundColor: Color(cat.color), radius: 6),
-                  title: Text(cat.name, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                return Padding(
+                  padding: const EdgeInsetsGeometry.directional(start: 16, end: 16, top: 6, bottom: 6),
+                  child: Row(
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.white54, size: 16),
-                        onPressed: () => _showCategoryDialog(context, ref, cat),
+                      CircleAvatar(backgroundColor: Color(cat.color), radius: 6),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(cat.name, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.redAccent, size: 16),
-                        onPressed: () => _confirmDelete(context, ref, cat),
+                      GestureDetector(
+                        onTap: () => _showCategoryDialog(context, ref, cat),
+                        child: const Icon(Icons.edit, color: Colors.white54, size: 16),
+                      ),
+                      const SizedBox(width: 24),
+                      GestureDetector(
+                        onTap: () => _confirmDelete(context, ref, cat),
+                        child: const Icon(Icons.delete, color: Colors.redAccent, size: 16),
                       ),
                     ],
                   ),
@@ -74,6 +78,9 @@ class CategoryScreen extends ConsumerWidget {
           builder: (ctx, setState) {
             return AlertDialog(
               backgroundColor: const Color(0xFF1C1C1E),
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
               title: Text(
                 existing == null ? '카테고리 추가' : '카테고리 수정',
                 style: const TextStyle(color: Colors.white),
@@ -99,6 +106,8 @@ class CategoryScreen extends ConsumerWidget {
                         context: ctx,
                         builder: (_) => AlertDialog(
                           backgroundColor: const Color(0xFF1C1C1E),
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
                           title: const Text('색상 선택', style: TextStyle(color: Colors.white)),
                           content: BlockPicker(
                             pickerColor: pickedColor,
@@ -118,7 +127,19 @@ class CategoryScreen extends ConsumerWidget {
                       children: [
                         const Text('색상', style: TextStyle(color: Colors.white54)),
                         const SizedBox(width: 16),
-                        CircleAvatar(backgroundColor: pickedColor, radius: 16),
+                        Material(
+                          type: MaterialType.transparency,
+                          elevation: 0,
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: pickedColor,
+                              shape: BoxShape.circle,
+                              boxShadow: const [],
+                            ),
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         const Text('탭하여 선택', style: TextStyle(color: Colors.white38, fontSize: 12)),
                       ],

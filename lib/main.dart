@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Todo Calendar',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData.dark(useMaterial3: false).copyWith(
         scaffoldBackgroundColor: Colors.black,
         colorScheme: const ColorScheme.dark(primary: Colors.blueAccent),
       ),
